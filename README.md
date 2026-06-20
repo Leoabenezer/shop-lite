@@ -1,5 +1,5 @@
-# shop-lite
-#THE UPDATE
+# shop-lite THE UPDATE
+
 # allowedDevOrigins Configuration
 
 ## Line 11 in next.config.mjs
