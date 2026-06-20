@@ -5,4 +5,4 @@
 ## Line 11 in next.config.mjs
 
 ```javascript
-allowedDevOrigins: ["192.168.0.190"],
+allowedDevOrigins: ["your-ip-address"],
