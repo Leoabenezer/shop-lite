@@ -1,65 +1,76 @@
-import Image from "next/image";
+"use client"; // 1. ይህ ኮድ በተጠቃሚው ብሮውዘር ላይ እንዲሰራ ማዘዣ።
+import React, { useState } from "react";
+import { PRODUCTS } from "../data"; // 2. የእቃዎቹን ዳታ መጫን።
+import ProductCard from "../components/ProductCard"; // 3. የእቃ ማሳያ ካርዱን መጫን።
+import { useCart } from "../context/CartContext"; // 4. እቃ ለመጨመር የካርት ማዕከሉን ማገናኘት።
 
-export default function Home() {
+function Home() {
+  const { addToCart } = useCart(); // 5. እቃ የመደመሪያውን ተግባር መውሰድ።
+  const [search, setSearch] = useState(""); // 6. ፍለጋ (Search) የተጻፈውን ጽሑፍ መከታተያ ስቴት።
+  const [category, setCategory] = useState("All"); // 7. የትኛው ዘርፍ (Category) እንደተመረጠ መከታተያ ስቴት።
+
+  // 8. ከዳታው ውስጥ ያሉትን የዘርፍ ስሞች (Shoes, Bags..) ለይቶ በማውጣት በምናሌው ላይ "All" የሚል ጨምሮ ማዘጋጀት።
+  const categories = ["All", ...new Set(PRODUCTS.map((p) => p.category))];
+
+  // 9. ተጠቃሚው በፈለገው ስም እና በመረጠው ዘርፍ መሰረት እቃዎቹን አጥሮ (Filter) ማውጣት።
+  const filteredProducts = PRODUCTS.filter((product) => {
+    const matchSearch = product.name
+      .toLowerCase()
+      .includes(search.toLowerCase()); // 10. የተጻፈው ጽሑፍ እቃው ስም ውስጥ መኖሩን ማየት።
+    const matchCategory = category === "All" || product.category === category; // 11. የተመረጠው ዘርፍ ከእቃው ዘርፍ ጋር መገጠሙን ማየት።
+    return matchSearch && matchCategory; // 12. ሁለቱንም የሚያሟላውን እቃ ብቻ ማስቀረት።
+  });
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <div>
+      {/* 13. የገጹ ራስጌ ጽሑፎች */}
+      <header className="text-center mb-10">
+        <h1 className="text-4xl font-extrabold mb-2">Our Products</h1>
+        <p className="text-gray-500">Search and filter products easily</p>
+      </header>
+
+      {/* 14. መፈለጊያ ሳጥን እና የዘርፍ መምረጫ (Search & Filter Bar) */}
+      <div className="flex flex-col md:flex-row gap-4 mb-8">
+        <input
+          type="text"
+          placeholder="Search products..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)} // 15. ተጠቃሚው በጻፈ ቁጥር ስቴቱን ማደስ።
+          className="w-full md:w-1/2 p-3 border rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.js file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+
+        <select
+          value={category}
+          onChange={(e) => setCategory(e.target.value)} // 16. ዘርፍ በተቀየረ ቁጥር ስቴቱን ማደስ።
+          className="w-full md:w-1/4 p-3 border rounded-xl shadow-sm focus:outline-none"
+        >
+          {categories.map((cat, index) => (
+            <option key={index} value={cat}>
+              {cat}
+            </option> // 17. ዘርፎቹን በዝርዝር አማራጭነት ማሳየት።
+          ))}
+        </select>
+      </div>
+
+      {/* 18. እቃዎቹ በረድፍና በአምድ (Grid) የሚደረደሩበት ክፍል */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+        {filteredProducts.length > 0 ? (
+          filteredProducts.map((product) => (
+            // 19. የተጣሩትን እቃዎች በሙሉ በካርድ ኮምፖነንት አማካኝነት አንድ በአንድ ማሳየት።
+            <ProductCard
+              key={product.id}
+              product={product}
+              addToCart={addToCart}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+          ))
+        ) : (
+          <p className="text-center text-gray-500 col-span-full">
+            No products found 😢
+          </p> // 20. የሚዛመድ እቃ ከጠፋ የሚታይ ጽሑፍ።
+        )}
+      </div>
     </div>
   );
 }
+
+export default Home;

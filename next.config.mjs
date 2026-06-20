@@ -1,7 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  /* config options here */
-  reactCompiler: true,
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
+    ],
+  },
+  //the change is here, add allowedDevOrigins to the nextConfig object
+  allowedDevOrigins: ["/* YOUR IP ADDRESS */"],
 };
 
 export default nextConfig;
